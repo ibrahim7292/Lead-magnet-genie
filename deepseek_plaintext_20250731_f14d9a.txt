@@ -1,0 +1,9 @@
+/src
+  /components
+    GeneratorForm.js
+    ResultDisplay.js
+    ExportOptions.js
+  /data
+    mockData.js
+  App.js
+  main.jsx

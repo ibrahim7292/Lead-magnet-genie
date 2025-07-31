@@ -1,0 +1,3 @@
+/server
+  index.js (Express server)
+  mockResponses.js
