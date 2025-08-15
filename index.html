@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO & Meta Tags -->
+    <title>AI Image Creator Pro 2.0 - Free Text to Image Generator</title>
+    <meta name="description" content="Generate stunning AI images instantly with AI Image Creator Pro 2.0. Powered by Stable Diffusion AI.">
+    <meta name="keywords" content="AI Image Generator, Text to Image AI, Stable Diffusion, AI Art, Free AI Tools">
+
+    <!-- Favicon Placeholder (replace href with your actual favicon.ico) -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. Global Styles & Resets --- */
+        :root {
+            --font-family: 'Poppins', sans-serif;
+            --primary-color: #ffffff;
+            --secondary-color: rgba(255, 255, 255, 0.7);
+            --button-bg: #6c5ce7;
+            --button-hover-bg: #8a7ff0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --error-color: #ff4757;
+            --success-color: #2ed573;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-family);
+            color: var(--primary-color);
+            background: linear-gradient(135deg, #000428, #004e92, #ad5389, #3c1053);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- 2. Animations --- */
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spinner {
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- 3. Main App Container --- */
+        .container {
+            width: 100%;
+            max-width: 550px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 var(--shadow-color);
+            text-align: center;
+        }
+
+        /* --- 4. Typography & Header --- */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--secondary-color);
+            margin-bottom: 30px;
+        }
+
+        /* --- 5. Form Elements --- */
+        .prompt-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .prompt-input {
+            width: 100%;
+            padding: 15px;
+            font-family: var(--font-family);
+            font-size: 1rem;
+            color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .prompt-input::placeholder {
+            color: var(--secondary-color);
+        }
+
+        .prompt-input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.5);
+        }
+
+        .generate-btn {
+            padding: 15px;
+            font-family: var(--font-family);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            background-color: var(--button-bg);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .generate-btn:hover {
+            background-color: var(--button-hover-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .generate-btn:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* --- 6. Image Preview & Download --- */
+        .image-preview-container {
+            margin-top: 30px;
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease;
+        }
+
+        .image-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            margin-bottom: 20px;
+        }
+
+        .generated-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px var(--shadow-color);
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            font-family: var(--font-family);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--button-bg);
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- 7. Loading Spinner --- */
+        .loading-spinner {
+            display: none; /* Hidden by default */
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spinner 1s linear infinite;
+            margin: 30px auto 0;
+        }
+
+        /* --- 8. Toast Notification --- */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 10px;
+            background-color: var(--error-color);
+            color: var(--primary-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, bottom 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            bottom: 50px;
+        }
+
+        /* --- 9. Responsiveness --- */
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .subtitle {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Application Container -->
+    <div class="container">
+        <h1>AI Image Creator Pro 2.0</h1>
+        <p class="subtitle">Turn your words into stunning, AI-generated art with Stable Diffusion.</p>
+
+        <!-- Prompt Input Form -->
+        <form class="prompt-form" id="prompt-form">
+            <input type="text" id="prompt-input" class="prompt-input" placeholder="Describe your image..." autocomplete="off">
+            <button type="submit" id="generate-btn" class="generate-btn">Generate Image</button>
+        </form>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loading-spinner"></div>
+
+        <!-- Image Preview Area -->
+        <div class="image-preview-container" id="image-preview-container">
+            <div class="image-wrapper">
+                <img src="" alt="Generated AI Image" id="generated-image" class="generated-image">
+            </div>
+            <a href="#" id="download-btn" class="download-btn" download="ai-image.png">Download Image</a>
+        </div>
+    </div>
+
+    <!-- Toast Notification for Errors -->
+    <div class="toast" id="toast-notification"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. API Configuration ---
+            // IMPORTANT: Replace "YOUR_API_KEY_HERE" with your actual Hugging Face API key.
+            const API_KEY = "YOUR_API_KEY_HERE"; // <-- PASTE YOUR HUGGING FACE API KEY HERE
+            const API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2";
+
+            // --- 2. DOM Element Selection ---
+            const form = document.getElementById('prompt-form');
+            const promptInput = document.getElementById('prompt-input');
+            const generateBtn = document.getElementById('generate-btn');
+            const spinner = document.getElementById('loading-spinner');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
+            const generatedImage = document.getElementById('generated-image');
+            const downloadBtn = document.getElementById('download-btn');
+            const toast = document.getElementById('toast-notification');
+
+            // --- 3. Form Submission Handler ---
+            form.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent default form submission
+                const prompt = promptInput.value.trim();
+
+                // Validate that the prompt is not empty
+                if (!prompt) {
+                    showToast("Please enter a prompt to generate an image.");
+                    return;
+                }
+
+                // Call the image generation function
+                generateImage(prompt);
+            });
+
+            // --- 4. Image Generation Function ---
+            async function generateImage(prompt) {
+                // Update UI to show loading state
+                setLoadingState(true);
+
+                try {
+                    // Make the API request using Fetch
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${API_KEY}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ inputs: prompt }),
+                    });
+
+                    // Check if the response is successful
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        // Handle specific API errors, e.g., model loading
+                        if (errorData && errorData.error) {
+                            if (errorData.error.includes("is currently loading")) {
+                                 throw new Error(`Model is loading, please try again in ${Math.round(errorData.estimated_time)} seconds.`);
+                            }
+                            throw new Error(errorData.error);
+                        }
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+
+                    // The response is an image blob
+                    const imageBlob = await response.blob();
+
+                    // Create a URL for the blob to display it
+                    const imageUrl = URL.createObjectURL(imageBlob);
+
+                    // Update the UI with the generated image
+                    displayGeneratedImage(imageUrl);
+
+                } catch (error) {
+                    // Display any errors to the user
+                    console.error("Error generating image:", error);
+                    showToast(error.message || "An unknown error occurred.");
+                } finally {
+                    // Reset the UI from the loading state
+                    setLoadingState(false);
+                }
+            }
+
+            // --- 5. UI State Management Functions ---
+
+            /**
+             * Manages the UI state during API calls (loading/idle).
+             * @param {boolean} isLoading - True if loading, false otherwise.
+             */
+            function setLoadingState(isLoading) {
+                if (isLoading) {
+                    generateBtn.disabled = true;
+                    generateBtn.textContent = 'Generating...';
+                    spinner.style.display = 'block';
+                    imagePreviewContainer.style.display = 'none';
+                } else {
+                    generateBtn.disabled = false;
+                    generateBtn.textContent = 'Generate Image';
+                    spinner.style.display = 'none';
+                }
+            }
+
+            /**
+             * Displays the generated image and download button.
+             * @param {string} imageUrl - The URL of the generated image.
+             */
+            function displayGeneratedImage(imageUrl) {
+                generatedImage.src = imageUrl;
+                downloadBtn.href = imageUrl;
+                imagePreviewContainer.style.display = 'block';
+
+                // Scroll to the image preview smoothly
+                imagePreviewContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
+
+            /**
+             * Shows a toast notification with a message.
+             * @param {string} message - The message to display in the toast.
+             */
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 4000); // Hide after 4 seconds
+            }
+        });
+    </script>
+</body>
+</html>
